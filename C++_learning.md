@@ -1340,6 +1340,20 @@ typename  表明其后面的符号是一种数据类型，可以用class代替
 T          通用的数据类型，名称可以替换通常为大写字母
 
 ```C++
+// 两个整型交换的函数
+void swapInt(int &a,int &b)
+{
+   int t =a;
+   a =b;
+   b = t;
+}
+// 两个double交换的函数
+void swapDouble(double &a,double &b)
+{
+   double t =a;
+   a =b;
+   b = t;
+}
 //定义函数模板
 template<typename T>
 void f(T &a,T &b)
@@ -1350,11 +1364,23 @@ void f(T &a,T &b)
     b=c;
 }
 ///调用函数模板
-//1、自动类型推导
-int a,b;
-f(a,b);
-//2、显示指定类型推导
-f<int>(a,b);
+void test1()
+{
+    int a = 10;
+    int b = 20;
+   // swapInt(a,b);
+   // 利用函数模板来交换
+   // 两种方式使用函数模板
+   // 1、自动类型推导
+   //mySwap(a,b);
+   // 2、显示指定类型
+   mySwap<int>(a,b);
+    cout<<"a="<<a<<",b="<<b<<endl;
+    double c= 1.1;
+    double d = 2.2;
+    swapDouble(c,d);
+    cout<<"c="<<c<<",d="<<d<<endl;
+}
 ```
 
 #### 1.2.2 函数模板注意事项
@@ -1363,6 +1389,228 @@ f<int>(a,b);
 
 - 自动类型推导，必须推出一致的数据类型才可以使用
 - 模板必须要确定出T的数据类型，才可以使用
+
+#### 1.2.3 函数模板案例
+
+- 利用模板封装一个排序函数，对不同类型数组进行排序
+- 从大到小，选择排序
+- 分别利用char数组和int数组测试 
+
+```c++
+	// 1.2.3 函数模板案例
+/*
+利用模板封装一个排序函数，对不同类型数组进行排序
+从大到小，选择排序
+分别利用char数组和int数组测试 
+ */
+// 交换
+// template<class T>
+// void mySwap(T &a,T &b)
+// {
+//    T t =a;
+//    a = b;
+//    b = t;
+// }
+//打印函数
+template<typename T>
+void pritnArray(T a[],int len)
+{
+   for (int i = 0; i < len; i++)
+   {
+      cout<<a[i]<<" ";
+   }
+   cout<<endl;
+}
+
+// 排序算法
+template<typename T>
+void mySort(T arr[],int len)
+{
+   for (int i = 0; i < len; i++)
+   {
+      int max = i;//认定最大值的下标
+      for (int j = i+1; j < len; j++)
+      {
+         if (arr[max] < arr[j])
+         {
+            // 认定的最大值 比 遍历出的数值要小，说明j下边的元素才是真正的最大值
+            max = j;
+         }         
+      }
+      if (max !=i)
+      {
+         //交换max 和j 的元素
+         mySwap(arr[max],arr[i]);
+      }
+      
+   }
+   
+}
+
+void test2()
+{
+   //测试char数组
+   char chs[] = "sfdgdgs";
+   int num = sizeof(chs)/ sizeof(char);
+   mySort(chs,num);
+   pritnArray(chs,num);
+   //测试int数组
+   int a[] = {1,4,67,8};
+   num = sizeof(a)/sizeof(int);
+   mySort(a,num);
+   pritnArray(a,num);
+}
+```
+
+#### 1.2.4 普通函数和函数模板的区别
+
+- 普通函数调用时可以发生自动类型转换(隐式类型转换)
+- 函数模板调用时，如果利用自动类型推导，不会发生隐式类型转换
+- 如果利用显示指定类型方式，可以发生隐式类型转换
+
+```c++
+// 函数模板
+template<typename T>
+T myAdd1(T a,T b)
+{
+   return a+b;
+}
+void test3()
+{
+   int a =10;
+   int b = 20;
+   char c ='c';//ASCLL： a -> 97 
+   cout<<myAdd(a,c)<<endl;
+   // 1、自动类型推导
+   //cout<<myAdd1(a,c)<<endl; //a,c 类型不同 会报错，因为不能做隐式类型转换
+   // 2、显示指定类型
+   cout<<myAdd1<int>(a,c)<<endl;
+}
+```
+
+#### 1.2.5 普通函数和函数模板的规则
+
+调用规则：
+
+1. 如果函数模板和普通函数都可以实现，**优先调用普通函数**
+2. 可以通过**空模板参数列表**来强制调用函数模板
+3. 函数模板也可以发生重载
+4. 如果函数模板可以产生更好的匹配，优先调用函数模板
+
+```C++
+//  1.2.5 普通函数和函数模板的规则
+void myPrint(int a,int b)
+{
+   cout<<"调用普通函数"<<endl;
+}
+template<class T>
+void myPrint(T a,T b)
+{
+   cout<<"调用模板函数"<<endl;
+}
+template<class T>
+void myPrint(T a,T b,T c)
+{
+   cout<<"调用重载的模板函数"<<endl;
+}
+void test4()
+{
+   int a =1;
+   int b =2;
+   // 如果函数模板和普通函数都可以实现，优先调用普通函数
+   myPrint(a,b);
+   // 空模板参数列表,强制调用模板函数
+   myPrint<>(a,b);
+   // 重载模板函数
+   myPrint<>(a,b,11);
+   //函数模板可以产生更好的匹配，优先调用函数模板
+   myPrint(a,b,23);
+   myPrint("a","c");
+}
+
+```
+
+总结：
+
+​	少写普通函数和函数模板同名的把，在开发中没意义，这里就是想着学习一下这个规则式怎么样的，得了解呀，因为既然有函数模板就是为了少写普通函数。
+
+#### 1.2.6 模板的局限性
+
+**局限性：**
+
+- 模板的通用性并不是万能的
+
+就比如啊，你两个数组赋值，两个自定义数据类型比较大小，就不能正常进行是不是。而这些问题我们在前面的学到的运算符重载就可以解决。
+
+
+
+```C++
+//1.2.6 模板的局限性
+// 特定的数据类型 需要具体方式特殊实现
+class Person
+{
+public:
+   string m_name;
+   int m_age;
+   Person(string name,int age)
+   {
+      this->m_name = name;
+      this->m_age = age;
+   } 
+};
+template<class T>
+bool myComp(T &a, T &b)
+{
+   if(a==b)
+   {
+      return true;
+   }
+   else
+   {
+      return false;
+   }
+   
+}
+// 利用具体化的Person 的版本实现 
+template<> bool myComp(Person &a, Person &b)
+{
+   if(a.m_name==b.m_name && a.m_age == b.m_age)
+   {
+      return true;
+   }
+   else
+   {
+      return false;
+   }
+   
+}
+void test5()
+{
+   int a =1;
+   int b =11;
+   Person p1("xcs",18);
+   Person p2("csy",19);
+   bool res = myComp(p1,p2); 
+   if (res)
+   {
+      cout<<"p1==p2"<<endl;
+   }
+   else
+   {
+      cout<<"p1 != p2"<<endl;
+   }
+   
+}
+```
+
+总结：
+
+- 用具体化的模板去解决自定义类型的通用化
+- 咱们学这个模板不是说要去自己写模板，是去使用STL提高的模板
+
+:facepunch:知道模板是啥，然后会用这个模板就可以啦！
+
+### 1.3 类模板
 
 
 
@@ -1424,7 +1672,7 @@ unorederd_set::end 返回结束的迭代器
 
 针对char 数组的，两个字符串相等为0反之为-1；
 
-## 
+ 
 
 ### 5.2 截取字符串的一部分
 
@@ -1694,6 +1942,26 @@ int min = *min_element(v.begin(),v.end());
 int max_index = distance(a.begin(),max_element(a.begin(),a.end()));
 int min_index = distance(a.begin(),min_element(a.begin(),a.end()));
 ```
+
+### 6.6 vector\<int> 类型 输出重载
+
+```c++
+// 重载vector的<< 运算符 用于直接输出 vector<int>
+ostream& operator<< (ostream& cout,vector<int>& a)
+{
+    for(vector<int>::iterator it = a.begin();it != a.end();it++)
+    {
+        cout<<*it<<" ";
+
+    }
+    //cout<<"\n";
+    return cout;
+}
+```
+
+
+
+
 
 ## 7 Map
 
