@@ -1,7 +1,7 @@
 # Cpp_learning
 :writing_hand: The experience of learning C++
 
-这里是学习c++基础时的一些笔记，因为我是半路开始整理的，刚开始学习的时候只写了markdown,我会陆续上传对应的code和更新markdown。
+这里是学习c++基础时的一些笔记(https://github.com/Xiaochaosui/Cpp_learning/blob/5f2dd307307dbfdd56fb5314f31444b9b8c540c5/C++_learning.md)，因为我是半路开始整理的，刚开始学习的时候只写了markdown(https://github.com/Xiaochaosui/Cpp_learning/blob/5f2dd307307dbfdd56fb5314f31444b9b8c540c5/C++_learning.md),我会陆续上传对应的code和更新markdown。
 
 ps：
 
