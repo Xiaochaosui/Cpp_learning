@@ -1,3 +1,7 @@
+---
+typora-root-url: img
+---
+
 [TOC]
 
 # C++_learning
@@ -1606,11 +1610,288 @@ void test5()
 总结：
 
 - 用具体化的模板去解决自定义类型的通用化
-- 咱们学这个模板不是说要去自己写模板，是去使用STL提高的模板
+- 咱们学这个模板不是说要去自己写模板，是去使用STL提供的模板
 
 :facepunch:知道模板是啥，然后会用这个模板就可以啦！
 
 ### 1.3 类模板
+
+类模板作用：
+
+- 建立一个通用类，类中的成员 数据类型可以不具体制定，用一个**虚拟的类型**来代表。
+
+#### 1.3.1 类模板语法
+
+**语法:**
+
+```C++
+// 1.3 类模板
+template<class NameType,class AgeType>
+class Person
+{
+public:
+    NameType m_Name;
+    AgeType m_Age;
+    Person(NameType name,AgeType age)
+    {
+        this->m_Age = age;
+        this->m_Name = name;
+    }
+
+    void show()
+    {  
+        cout<<"name:"<<this->m_Name<<" age:"<<this->m_Age<<endl;
+       
+    }
+    
+};
+```
+
+**解释:**
+
+- template  声明创建模板
+- class/typename  表面后面的符号是一种数据类型(虚拟)
+- AgeType/NameType  通用的数据类型，名称可以替换就当作一个参数变量，通常为大写字母
+
+```C++
+void test1()
+{
+   Person<string,int> p1("xcs",18);// 使用类模板并给定参数类型
+
+    p1.show();
+}
+```
+
+
+
+#### 1.3.2 类模板与函数模板区别
+
+类模板和函数模板的**区别**主要有两点：
+
+1. 类模板没有自动类型推导的使用方式
+2. 类模板在模板参数列表中可以有默认参数
+
+```C++
+//  1.3.2 类模板与函数模板区别
+// 用上面 定义的 Person类模板
+    //1. 类模板没有自动类型推导的使用方式
+
+void test2()
+{
+ //  Person p("xcs",22); //直接这么写会报错,无法用自动类型推导
+    Person<string,int> p1("xcs",18);// 正确，只能是显示指定类型
+    p1.show();
+}
+//2. 类模板在模板参数列表中可以有默认参数
+void test2()
+{
+    
+    Person<string> p1("xcs",18);// 因为在定义的时候指定了默认参数
+                                //template<class NameType,class AgeType = int>
+    p1.show();
+}	
+```
+
+#### 1.3.3 类模板中成员函数创建时机
+
+类模板中成员函数和普通类中的成员函数创建时机是有区别的:
+
+- 普通类中的成员函数是一开始就创建的
+- 类模板中的成员函数在调用时才创建
+
+```C++
+// 1.3.3 类模板中成员函数创建时机
+//  - 普通类中的成员函数是一开始就创建的
+//  - 类模板中的成员函数在调用时才创建
+class P1
+{
+public:
+    void show1()
+    {
+       cout<<"show P1"<<endl;
+    }
+    
+};
+class P2
+{
+public:
+    void show2()
+    {
+       cout<<"show P2"<<endl;
+    }
+    
+};
+
+template<class T>
+class myClass
+{
+public:
+    T obj;
+
+    // 类模板中的成员函数,并不是一开始创建的，而是在模板调用时再生成
+    void f1()
+    {
+       obj.show1();
+    }
+    void f2()
+    {
+       obj.show2();
+    }
+    
+};// 当我不知道obj是啥类型的时候但是 obj.show编译时没错的,也就是说 类模板的成员函数 没有被调用这个 f1,f2 是没有被生成的所以是不会报错的，只有在调用f1，f2的时候才知道obj是个啥
+void test4()
+{
+//    cout<<"test3"<<endl;
+    myClass<P1> m;
+    m.f1();// 调用f1不会报错,识别obj 为P1
+    //m.f2();// 上面已经指定obj为类型P1 而P1 里面是没有show2()函数的 所以是会报错的 但是 你不调用f2 是不会报编译错误的
+    // 对比着看 就能知道 类模板的成员函数是什么时候创建的，这里有点绕，实在绕不懂的时候可以先认定结论然后带着结论去对比code理解看
+}
+
+```
+
+总结:类模板成员函数不是在一开始就创建的，而是在调用的时候就创建的
+
+#### 1.3.4 类模板对象做为函数参数
+
+**学习目标：**
+
+- 类模板实例化出的对象，向函数传参的方式
+
+一共有三种传入方式：
+
+1. 指定传入的类型   直接显示对象的数据类型
+2. 参数模板化  将对象的参数变为模板进行传递
+3. 整个类模板化  将这个对象类型模板化进行传递
+
+```C++
+// 1.3.4 类模板对象做函数参数
+template<class T1,class T2>
+class A
+{
+public:
+    T1 m_Name;
+    T2 m_Age;
+    A(T1 name,T2 age)
+    {
+        this->m_Age = age;
+        this->m_Name = name;
+    }
+    void show()
+    {  
+        cout<<"name:"<<this->m_Name<<" age:"<<this->m_Age<<endl;
+       
+    }
+};
+    // 1. 指定传入的类型   直接显示对象的数据类型
+    // 使用相对广泛
+void printA( A<string,int> a)
+{
+    a.show();
+}
+
+void test5()
+{
+   A<string,int> p("xcs",22);
+   printA(p);
+
+}
+
+    
+    // 2. 参数模板化  将对象的参数变为模板进行传递
+template<class T1,class T2>
+void printA2( A<T1,T2> &a)
+{
+    a.show();
+    cout<<"T1 type:"<<typeid(T1).name()<<endl;// 查看这个类型的名字
+    cout<<"T2 type:"<<typeid(T2).name()<<endl;
+}
+void test6()
+{
+   A<string,int> p("xcs",22);
+   printA2(p);
+}
+    // 3. 整个类模板化  将这个对象类型模板化进行传递
+template<class T>
+void printA3( T &a)
+{
+    a.show();
+    cout<<"T type:"<<typeid(T).name()<<endl;
+}
+void test7()
+{
+    A<string,int> p("xcs",22);
+   printA3(p);
+}
+```
+
+总结：
+
+- 通过类模板创建对象，可以有三种方式向函数中进行传参
+- 使用比较多的是第一种:指定传入类型(个人感觉2，3中太复杂都是用函数模板配合着类模板去使用，第2中最呆瓜不建议使用，不过还是特殊情况特殊使用)
+
+#### 1.3.5 类模板与继承
+
+当类模板碰到继承时，需要注意:
+
+- 当子类继承的父类是一个类模板时，子类在声明的时候要指定出父类模板中T的类型
+- 如果不指定，编译器无法给子类分配内存
+- 如果想灵活指定出父类中T的类型，子类也需要变为类模板
+
+```C++
+// 1.3.5 类模板与继承
+// 看类模板是如何被继承的？
+// 这是一个base类模板
+template<class T>
+class Base
+{
+public:
+    T m;
+    Base()
+    {
+        cout<<"这是base的构造函数"<<endl;
+    }
+};
+
+// 定义个普通子类1
+// 普通类继承 父类模板类 需指定父类的 模板参数类型
+//class son1:public Base // 没有指定 父类的 模板参数的类型 会报错
+class son1:public Base<int>
+{
+public:
+    string n;
+};
+// 定义个普通子类2
+// 子类模板继承父类模板
+template<class T1,class T2>
+class son2:public Base<T1>
+{
+public:
+    T2 n;
+    son2()
+    {
+        cout<<"T1 type:"<<typeid(T1).name()<<endl;
+        cout<<"T2 type:"<<typeid(T2).name()<<endl;
+    }
+};
+void test8()
+{
+   son1 s1; //实例化son1的时候会 调用 父类的 构造函数
+   son2<int,string>s2; //  实例化的时候要 显示指定 模板类(包括父类)的参数类型
+}
+```
+
+实例化子类时，模板参数的传递过程：
+
+<img src="/1.3.5类模板继承.png" alt="1.3.5类模板继承" style="zoom:50%;" />
+
+**总结:**
+
+- 不管什么时候使用类去继承，都要体现出子类继承父类的时候要声明父类的模板参数类型T,因为如果不声明的话，编译器不知道如何去给子类分配内存(模板参数T所对应的变量的内存,如 `T m`不说明T为一个具体的类型无法计算内存)
+
+
+
+
 
 
 
@@ -1627,6 +1908,22 @@ void test5()
 ## 1 STL诞生
 
 为了建立数据结构和算法的一套标准
+
+1. vector 底层数据结构为数组 ，支持快速随机访问 
+2. list 底层数据结构为双向链表，支持快速增删 
+3. deque 底层数据结构为一个中央控制器和多个缓冲区，详细见STL源码剖析P146，支持首尾（中间不能）快速增删，也支持随机访问 
+4. stack 底层一般用23实现，封闭头部即可，不用vector的原因应该是容量大小有限制，扩容耗时 
+5. queue 底层一般用23实现，封闭头部即可，不用vector的原因应该是容量大小有限制，扩容耗时 
+6. 45是适配器,而不叫容器，因为是对容器的再封装 
+7. priority_queue 的底层数据结构一般为vector为底层容器，堆heap为处理规则来管理底层容器实现 
+8. set 底层数据结构为红黑树，有序，不重复 
+9. multiset 底层数据结构为红黑树，有序，可重复 
+10. map 底层数据结构为红黑树，有序，不重复 
+11. multimap 底层数据结构为红黑树，有序，可重复 
+12. hash_set 底层数据结构为hash表，无序，不重复 
+13. hash_multiset 底层数据结构为hash表，无序，可重复 
+14. hash_map 底层数据结构为hash表，无序，不重复 
+15. .hash_multimap 底层数据结构为hash表，无序，可重复
 
 ## 2 STL基本概念
 
@@ -2234,15 +2531,15 @@ void test13()
 
 
 
-# C++调用Python
+## 5 C++调用Python
 
-## 1 基本流程
+#### 5.1 基本流程
 
 
 
-## 2 使用中遇到的问题
+#### 5.2 使用中遇到的问题
 
-### 2.1 导入模块时 模块名为test会报错
+##### 5.2.1 导入模块时 模块名为test会报错
 
 ```c++
 PyObject *pModule = PyImport_ImportModule("test")  // 导入模块名会报错，我也不知道为啥
