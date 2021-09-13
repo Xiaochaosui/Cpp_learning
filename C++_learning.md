@@ -1,5 +1,5 @@
 ---
-typora-root-url: img
+stypora-root-url: ./
 ---
 
 [TOC]
@@ -1682,7 +1682,8 @@ void test2()
     Person<string,int> p1("xcs",18);// 正确，只能是显示指定类型
     p1.show();
 }
-//2. 类模板在模板参数列表中可以有默认参数
+//2. 类模板在模板参数列表中可以有默认参数，定义模板类的时候 直接就给出了，如下
+# template<class NameType,class AgeType = int>
 void test2()
 {
     
@@ -1883,13 +1884,189 @@ void test8()
 
 实例化子类时，模板参数的传递过程：
 
-<img src="/1.3.5类模板继承.png" alt="1.3.5类模板继承" style="zoom:50%;" />
+<img src="img/1.3.5类模板继承.png" alt="1.3.5类模板继承" style="zoom:50%;" />
 
 **总结:**
 
 - 不管什么时候使用类去继承，都要体现出子类继承父类的时候要声明父类的模板参数类型T,因为如果不声明的话，编译器不知道如何去给子类分配内存(模板参数T所对应的变量的内存,如 `T m`不说明T为一个具体的类型无法计算内存)
 
+#### 1.3.6 类模板成员函数类外实现
 
+必须要掌握成员函数类外实现
+
+```C++
+// 1.3.6 类模板成员函数类外实现
+// 仿照上面写的类模板
+template<class T1,class T2>
+class Xcs
+{
+public:
+    T1 m_name;
+    T2 m_age;
+    Xcs(T1,T2);
+    void show();
+};
+// Xcs 类外实现 Xcs()构造函数
+template<class T1,class T2>
+Xcs<T1,T2>::Xcs(T1 name,T2 age)
+{
+    this->m_age = age;
+    this->m_name = name;
+}
+template<class T1,class T2>
+void Xcs<T1,T2>::show() // 加上模板参数
+{  
+        cout<<"name:"<<this->m_name<<" age:"<<this->m_age<<endl;
+       
+}
+
+void test9()
+{
+   Xcs<string,int> x("xcs",12);
+   x.show();
+}
+```
+
+
+
+
+
+#### 1.3.7 类模板分文件编写
+
+类模板成员函数分成几个文件编写产生的问题及解决方式
+
+**问题：**
+
+- 类模板中成员函数创建时机是在调用阶段(前面1.3.3 说过的)，导致文件编写时链接不到
+
+![1.3.7 类模板份文件编写-01](img/1.3.7 类模板份文件编写-01.png)
+
+**解决：**
+
+1. 直接包含.cpp源文件
+2. 将声明和实现写到同一个文件中，更该后缀名会.hpp，hpp是约定的名称不是强制
+
+**分文件编写:**
+
+1. 创建一个头文件 `Xcs.h`,`Xcs.cpp`
+2. `.cpp文件`写类的成员函数，`.h文件`写类的声明
+3. 然后通过头文件是`.h`和`.cpp` 产生联系(看图说话)
+
+**创建.h&.cpp：**
+
+<img src="img/1.3.7 类文件编写-1.png" alt="1.3.7 类文件编写-头文件" style="zoom: 80%;" />
+
+<img src="img/1.3.7 类文件编写-2.png" alt="1.3.7 类文件编写-2" style="zoom:80%;" />
+
+
+
+**Xcs.h:**
+
+```C++
+#include <iostream>
+#include <string>
+using namespace std;
+// 定义的模板类
+template<class T1,class T2>
+class Xcs
+{
+public:
+    T1 m_name;
+    T2 m_age;
+    Xcs(T1,T2);
+    void show();
+};
+
+
+//普通的Person 类
+class Person
+{
+public:
+    string m_Name;
+    int m_Age;
+    Person(string name,int age);
+    void show();
+    
+};
+
+```
+
+**Xcs.cpp:**
+
+```C++
+#include <iostream>
+#include <string>
+#include "Xcs.h"
+using namespace std;
+
+// Xcs 类外实现 Xcs()构造函数
+template<class T1,class T2>
+Xcs<T1,T2>::Xcs(T1 name,T2 age)
+{
+    this->m_age = age;
+    this->m_name = name;
+}
+template<class T1,class T2>
+void Xcs<T1,T2>::show()// 加上模板参数
+{  
+        cout<<"name:"<<this->m_name<<" age:"<<this->m_age<<endl;
+       
+}
+// Person类成员函数
+Person::Person(string name,int age)
+{
+    this->m_Age = age;
+    this->m_Name = name;
+}
+
+void Person::show()
+{  
+    cout<<"name:"<<this->m_Name<<" age:"<<this->m_Age<<endl;
+    
+}
+
+```
+
+**3_class_Template.cpp:**
+
+```C++
+#include <iostream>
+#include <string>
+
+#include "Xcs.h" // 导入你编写的类
+
+using namespace std;
+
+void test1()
+{   //  分文件编写  模板类 Xcs
+    Xcs x("xcs",22); // 而直接这么调用是会报错的也就是上面提到的问题
+    x.show();
+
+    // 分文件编写 普通类Person
+    // Person p("xcs",1);
+    // p.show();
+}
+//
+int main()
+{
+   system("chcp 65001");
+   test1();
+   system("pause");
+   return 0;
+}
+```
+
+
+
+
+
+
+
+#### 1.3.8 类模板与友元
+
+
+
+#### 1.3.9 类模板案例
 
 
 
