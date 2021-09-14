@@ -17,6 +17,8 @@ void printPer2(Person<T1,T2> p)
     cout<<"name:"<<p.m_Name<<" age:"<<p.m_Age<<endl;
 }
 
+
+
 template<class T1,class T2>
 class Person
 {

@@ -614,7 +614,7 @@ void func(int a,int)
 ​	这两个函数是编译器自动调用，完成对象初始化和清理工作；**对象的初始化和清理工作是编译器强制我们要做的事情，因此如果我们不提供构造和析构，编译器会提供编译器提供的构造函数和析构函数是空实现。**
 
 1. **构造**函数：主要作用于创建对象时为对象的成员属性赋值，构造函数由编译器自动调用，无须手动调用。
-2. **析构**函数：主要作用于对象销毁前系统自动调用，执行清理工作。
+2. **析构**函数：主要作用于对象销毁前系统自动调用，执行清理工作(一般在程序结束时调用)。
 
 **构造函数语法：**`类名(){函数体}`
 
@@ -2143,13 +2143,206 @@ void test2()
 - 可以通过下标的方式访问数组的元素
 - 可以获取数组中当前元素个数和数组的容量
 
+MyArry.cpp
+
+```C++
+// 自己的通用数组类
+template<class T>
+class MyArray
+{
+public:
+    //有参构造 参数 容量
+    MyArray(int capacity)
+    {   cout<<"MyArry 的有参构造调用"<<endl;
+        this->m_Capacity = capacity;
+        this->m_Size = 0;
+        this->pAddress = new T[this->m_Capacity];
+
+    }
+
+    // 拷贝构造
+
+    MyArray(const MyArray& arry)
+    {   cout<<"MyArry 的拷贝构造调用"<<endl;
+        this->m_Capacity = arry.m_Capacity;
+        this->m_Size = arry.m_Size;
+        //this->pAddress = arry.pAddress; // 这是指针不能直接赋值   结束的时候会导致堆区的数据重复释放
+        // 深拷贝
+        this->pAddress =  new T[arry.m_Capacity];
+        // 将arry中的数据都拷贝过来
+        for (int i = 0; i < this->m_Size; i++)
+        {
+            this->pAddress[i] = arry.pAddress[i];
+        }
+        
+    }
+
+    // operator= 防止浅拷贝问题     为了可以有 a = b =c 操作，所以返回自身
+    MyArray& operator=(const MyArray& arry)
+    {   cout<<"MyArry 的=调用"<<endl;
+        // 首先判断原来堆区是否有数据 如果有则先释放
+        if(this->pAddress != NULL)
+        {
+            delete[] this->pAddress;
+            this->pAddress = NULL;
+            this->m_Capacity = 0;
+            this->m_Size = 0;
+        }
+        // 深拷贝
+        this->m_Size = arry.m_Size;
+        this->m_Capacity = arry.m_Capacity;
+        this->pAddress = new T[this->m_Capacity];
+        for (int i = 0; i < this->m_Size; i++)
+        {
+            this->pAddress[i] = arry.pAddress[i];
+        }
+        return *this;
+    }
+    // 尾插法
+    void push_back(const T & val)
+    {
+       // 判断容量是否等于大小
+       if (this->m_Capacity == this->m_Size)
+       {
+           return;
+       }
+       this->pAddress[this->m_Size] = val; // 数组末尾插入数据
+       this->m_Size++; // 更新数组大小
+    }
+    // 尾删法
+    void pop_back()
+    {
+       // 用户访问不到最后一个元素，即为尾删，逻辑删除
+       if (this->m_Size == 0)
+       {
+           return ;
+       }
+       this->m_Size--;
+
+    }
+    // 通过下标的方式访问元素 重载[]
+    // arry[0] arry[1] 还可以作为左值存在 即 arr[0]  =100;
+
+    T& operator[](int index)
+    {
+        return this->pAddress[index]; // 这里没有考虑越界问题，可以自己加个判断
+    }
+    //重载cout<<
+    // 这里要用友元 这里相当于是全局函数 访问 另一个MyArry里面的私有属性 pAddress 故要用友元
+    friend ostream &operator<< (ostream& cout,const MyArray & arry) 
+    {
+        for (int i = 0; i < arry.m_Size; i++)
+        {
+            cout<<arry.pAddress[i]<<" ";
+        }
+        return cout; 
+    }
+    //返回数组的大小
+    int getSize()
+    {
+        return this->m_Size;
+    }
+    // 返回数组的容量
+    int getCapacity()
+    {
+        return this->m_Capacity;
+    }
+    // 析构
+    ~MyArray()
+    {   cout<<"MyArry 的析构函数调用"<<endl;
+        if(this->pAddress !=NULL)
+        {
+            delete[] this->pAddress;
+            this->pAddress = NULL;
+        }
+    }
+private:
+    T* pAddress; // 指针指向堆区开辟的真实数组
+    int m_Capacity; // 通用数组的容量
+    int m_Size;     // 数组的大小
+
+};
+```
 
 
 
+c++内置数据类型测试定义的MyArry数组：
+
+```C++
+// 在MyArry中存入的是int类型(内置类型)的测试
+void test1()
+{
+   MyArray<int> arr1(5);
+    for (int i = 0; i < 5; i++)
+    {
+        //利用尾插法向数组中插入数据
+        arr1.push_back(i);
+    }
+    cout<<"arr1 的打印输出:"<<arr1<<endl; // 重载左移运算符<<   打印输出 MyArry
+    cout<<"arr1[0] 的打印输出:"<<arr1[0]<<endl;
+    cout<<"arr1 大小:"<<arr1.getSize()<<endl;
+    cout<<"arr1 容量:"<<arr1.getCapacity()<<endl;
+    MyArray<int> arr2(arr1);
+    cout<<"arr2 的打印输出:"<<arr2<<endl;
+    arr2.pop_back();
+    cout<<"arr2执行pop_back()"<<endl;
+    cout<<"arr2 容量:"<<arr2.getCapacity()<<endl;
+    cout<<"arr2 大小:"<<arr2.getSize()<<endl;
+   
+//     MyArry<int> arr3(100);
+//    arr3 = arr1;
+}
+```
+
+自定义数据类型Person存入数组:
+
+```C++
+// 自定义数据类型测试
+class Person
+{
+public:
+    string m_Name;
+    int m_Age;
+    Person(){}; // Pay Attention！！！  这个无参构造必须写，因为在下面声明MyArry<Person> arr(10);的时候，没有无参构造会报申请内存空间的错误
+    Person(string name,int age)
+    {
+        this->m_Age = age;
+        this->m_Name = name;
+    }
+
+};
+void printPersonArray(MyArray<Person> &arr)
+{
+   for (int i = 0; i < arr.getSize(); i++)
+   {
+       cout<<"Name:"<<arr[i].m_Name<<" Age:"<<arr[i].m_Age<<endl;
+   }
+   
+}
+
+void test2()
+{
+    MyArray<Person> arr(10);
+    Person p1("xcs",22);
+    Person p2("xcsy",22);
+    Person p3("geek",22);
+    // 将数据插入数组
+    arr.push_back(p1);
+    arr.push_back(p2);
+    arr.push_back(p3);
+    // 打印person数组
+    printPersonArray(arr);
+    cout<<"arr_Person 大小:"<<arr.getSize()<<endl;
+    cout<<"arr_Person 容量:"<<arr.getCapacity()<<endl;
+   //cout<<"arr 的输出:"<<arr<<endl; // 这里不能用重载的<< 因为没有写 Person类的重载<< 
+}
+```
+
+总结:
+
+- 这个案例复习了蛮多东西的，首先模板，数组，类，运算符重载，友元等,将来可以自己写一个STL库
 
 
-
-【未完待续】
 
 
 
