@@ -1,5 +1,4 @@
-// 定义自己的通用数组类
-
+// 定义自己的通用数组类 //
 #pragma once
 #include <iostream>
 using namespace std;
