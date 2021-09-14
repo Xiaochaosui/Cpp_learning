@@ -3,7 +3,6 @@
 #include <string>
 using namespace std;
 
-
 //普通的Person 类
 class Person
 {
