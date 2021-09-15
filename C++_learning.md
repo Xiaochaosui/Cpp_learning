@@ -2346,17 +2346,11 @@ void test2()
 
 
 
-
-
-
-
-
-
 # STL
 
 ## 1 STL诞生
 
-为了建立数据结构和算法的一套标准
+**为了建立数据结构和算法的一套标准**
 
 1. vector 底层数据结构为数组 ，支持快速随机访问 
 2. list 底层数据结构为双向链表，支持快速增删 
@@ -2377,15 +2371,66 @@ void test2()
 ## 2 STL基本概念
 
 - STL(Standard Template Library ，标准模板库)
-- STL从广义上分为：容器(container) 算法(algorithm) 迭代器(iterator)
-- 容器和算法之间通过迭代器进行无缝衔接
+- STL从广义上分为：**容器**(container) **算法**(algorithm) **迭代器**(iterator)
+- **容器**和**算法**之间通过迭代器进行无缝衔接
 - STL几乎所有的代码都采用了模板类或者模板函数
 
 ## 3 STL六大组件
 
-六大组件:
+**六大组件:**
 
-1. 容器：各种数据结构，如vector，list，deque，set，map等，用来存放数据
+1. 容器：各种数据结构，如vector，list，deque，set，map等，用来存放数据；
+2. 算法：各种常用算法，如sort,find,copy,for_each等；
+3. 迭代器：扮演了容器与算法之间的胶合剂；
+4. 仿函数：行为类似函数，可作为算法的某种策略；
+5. 适配器(配接器)：一种用来修饰容器或者仿函数或迭代器接口的东西；
+6. 空间配置器：负责空间的配置与管理；
+
+### 3.1 容器
+
+置物之也。
+
+STL容器就是把运用最广泛的数据结构实现出来
+
+常用的数据结构: 数组，链表，树，栈，队列，集合，映射表等；
+
+容器可分为**序列式容器和关联式容器**:
+
+- **序列式容器**:强调值的排序，序列式容器中的每个元素都有固定的位置；
+- **关联式容器**: 二叉树结构，各个元素之间没有严格的物理上的顺序关系；
+
+### 3.2 算法
+
+问题之解法也。
+
+有限的步骤，解决逻辑和数学上的问题，这一门学科我们叫做算法(Algorithm)
+
+算法分为:**质变算法和非质变算法**
+
+- **质变算法**: 在运算过程中会更改区间内的元素的内容。如，拷贝，替换，删除等等；
+- **非质变算法**：在运算过程中**不会**更改区间内的元素的内容。如查找，计数，遍历，寻找极值等；
+
+### 3.3 迭代器
+
+容器和算法之间的粘合剂。**算法要通过迭代器才能访问容器中的元素**
+
+提高一种方法，使之能够依序寻访某个容器所含的各个元素，而又无需暴露该容器的内部表示方式。
+
+每个容器都有自己的专属的迭代器。
+
+迭代器使用非常类似于指针，初学阶段我们可以先理解迭代器为指针。
+
+**迭代器种类:**
+
+| 种类           | 功能                                                 | 支持运算                           |
+| -------------- | ---------------------------------------------------- | ---------------------------------- |
+| 输入迭代器     | 对数据的只读访问                                     | 只读，支持++,==,!=                 |
+| 输出迭代器     | 对数据的只写访问                                     | 只写，支持++                       |
+| 前向迭代器     | 读写操作，并能向前推进迭代器                         | 读写，支持++,==,!=                 |
+| 双向迭代器     | 读写操作，并能向前向后操作                           | 读写，支持++，--                   |
+| 随机访问迭代器 | 读写操作，可以跳跃式的访问任意数据，功能最强的迭代器 | 读写，支持++，--，[n],-n,<,<=,>,>= |
+
+常用容器中的迭代器种类为双向迭代器和随机访问迭代器。
 
 
 
@@ -2393,34 +2438,13 @@ void test2()
 
 
 
+## 4 字符串
 
-
-
-
-
-
-## 4 数据结构
-
-### 1.1 unordered_set 使用
-
-unordered_set可以把它想象成一个集合，它提供了几个函数让我们可以增删查：
-unordered_set::insert
-unordered_set::find 会返回一个迭代器,这个迭代器指向和参数哈希值匹配的元素，如果没有匹配的元素，会返回这个容器的结束迭代器
-unordered_set::erase
-
-unorederd_set::end 返回结束的迭代器
-
-这个unorder暗示着，这两个头文件中类的底层实现----Hash。 也是因为如此，你才可以在声明这些unordered模版类的时候，传入一个自定义的哈希函数，准确的说是哈希函数子（hash function object）。
-
-## 5 字符串
-
-### 5.1 strcmp(chars1,chars2)函数
+### 4.1 strcmp(chars1,chars2)函数
 
 针对char 数组的，两个字符串相等为0反之为-1；
 
- 
-
-### 5.2 截取字符串的一部分
+### 4.2 截取字符串的一部分
 
 `string substr(int pos = 0,int n ) const;`
 
@@ -2434,9 +2458,7 @@ unorederd_set::end 返回结束的迭代器
 
 如要截取的是某个字符后面的一部分，可以先用`string find(char c);` 获得某个字符的 index然后用`substr`去截取所需的字符串。
 
-
-
-### 5.3 字符串替换
+### 4.3 字符串替换
 
 **源字符串改变！**
 
@@ -2453,7 +2475,7 @@ void test1()
 }
 ```
 
-### 5.4 分割字符串
+### 4.4 分割字符串
 
 ```c++
 //通过使用strtok()函数实现
@@ -2503,7 +2525,7 @@ std::vector<std::string> splitWithStl(const std::string &str,const std::string &
 
 ```
 
-### 5.5 字符串转数字
+### 4.5 字符串转数字
 
 **用ato这个类**
 
@@ -2514,7 +2536,7 @@ int a = atoi(s1.c_str()); //要转换成 int，double，long，long 分别用ato
 //ato这个类接收的是const char* char所以string 要用c_str()转换成char*
 ```
 
-### 5.6 保留小数转换为字符串
+### 4.6 保留小数转换为字符串
 
 ```C++
 #include <sstream>
@@ -2528,9 +2550,76 @@ auto formatDobleValue(double val, int fixed) {
 
 
 
-## 6 Vector
+## 5 Vector
 
-### 6.1  vector 排序
+vector存放内置数据类型:
+
+- 容器：`vector`
+- 算法：`for_each`
+- 迭代器:`vector\<int>:iterator`
+
+5 vector.cpp:
+
+```C++
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+void myPrint(int v)
+{
+   cout<<v<<endl;
+}
+// vector容器算法内置数据类型
+void test1()
+{  
+    //创建vector容器，可以理解为一个数组
+    vector<int> v;
+    // 向容器中插入数据
+    v.push_back(10);
+    v.push_back(12);
+    v.push_back(13);
+    // 通过迭代器访问容器中的数据
+    //第一种遍历方式
+    vector<int>::iterator itBegin = v.begin();  //起始迭代器，指向容器中的第一个元素
+    vector<int>::iterator itEnd = v.end();  //结束迭代器，指向容器中的最后一个元素的下个位置
+
+    while (itBegin != itEnd)
+    {
+        cout<< *itBegin<<endl;
+        itBegin++;
+    }
+    // 第二种遍历方式
+    cout<<"// 第二种遍历方式"<<endl;
+    for (int i = 0; i < v.size(); i++)
+    {
+        cout<<v[i]<<endl;
+    }
+
+    //第3种遍历方式
+    cout<<"// 第3种遍历方式"<<endl;
+    for (vector<int>::iterator it = v.begin(); it != v.end(); it++)
+    {
+         cout<< *it<<endl;
+    }
+    
+    //第4种遍历方式,利用STL的遍历算法
+    cout<<"// 第4种遍历方式"<<endl;
+    for_each(v.begin(),v.end(),myPrint); //利用回调的技术 就是遍历v.begin() 到 v.end() 之间的每个元素去执行myPrint函数
+    
+}
+```
+
+总结:
+
+- 主要了解vector的一个创建，插入数据、遍历的过程并结合STL的个别算法
+
+
+
+
+
+### 5.1  vector 排序
 
 - vector中是可排序的类型如int,double,float等
 
@@ -2591,7 +2680,7 @@ void test3()
 }
 ```
 
-### 6.2 vector删除元素
+### 5.2 vector删除元素
 
 ```c++
 //vector删除元素
@@ -2635,7 +2724,7 @@ void test5()
 
 ```
 
-### 6.3 两个vector合并
+### 5.3 两个vector合并
 
 三种方式：
 
@@ -2671,7 +2760,7 @@ void test7()
 }
 ```
 
-### 6.4 vector 求最大最小元素
+### 5.4 vector 求最大最小元素
 
 ```c++
 vector<int> v:
@@ -2682,14 +2771,14 @@ vector<int>::iterator max_it = max_element(v.begin(),v.end()); //则最大值为
 int min = *min_element(v.begin(),v.end());
 ```
 
-### 6.5 vector 求最大最小元素的索引
+### 5.5 vector 求最大最小元素的索引
 
 ```c++
 int max_index = distance(a.begin(),max_element(a.begin(),a.end()));
 int min_index = distance(a.begin(),min_element(a.begin(),a.end()));
 ```
 
-### 6.6 vector\<int> 类型 输出重载
+### 5.6 vector\<int> 类型 输出重载
 
 ```c++
 // 重载vector的<< 运算符 用于直接输出 vector<int>
@@ -2807,6 +2896,23 @@ void test(vector<string,string> &m1)
 ### 7.4 map清空和判空
 
 清空map中的数据可以用clear()函数，判定map中是否有数据可以用empty()函数，它返回true则说明是空map
+
+
+
+## ？ 数据结构
+
+### 1.1 unordered_set 使用
+
+unordered_set可以把它想象成一个集合，它提供了几个函数让我们可以增删查：
+unordered_set::insert
+unordered_set::find 会返回一个迭代器,这个迭代器指向和参数哈希值匹配的元素，如果没有匹配的元素，会返回这个容器的结束迭代器
+unordered_set::erase
+
+unorederd_set::end 返回结束的迭代器
+
+这个unorder暗示着，这两个头文件中类的底层实现----Hash。 也是因为如此，你才可以在声明这些unordered模版类的时候，传入一个自定义的哈希函数，准确的说是哈希函数子（hash function object）。
+
+
 
 # 应用
 

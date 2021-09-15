@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <string.h>
 using namespace std;
-//6.1  vector 排序
+//5.1  vector 排序
 
 // vector 普通类型排序
 void test2()
@@ -57,7 +57,7 @@ void test3()
     }
 }
 
-//6.2 vector删除元素
+//5.2 vector删除元素
 
 //vector remove删除元素
 void test5()
@@ -129,7 +129,7 @@ void outVec(vector<int> a)
     }
 }
 
-//6.3 两个vector合并
+//5.3 两个vector合并
 
 // 多个 合并vector
 void test7()
@@ -158,8 +158,8 @@ void test7()
 }
 
 
-// 6.4 vector 求最大最小元素
-// 6.5 vector 求最大最小元素的索引
+// 5.4 vector 求最大最小元素
+// 5.5 vector 求最大最小元素的索引
 // vector中最大、小值
 void test11()
 {
@@ -182,7 +182,7 @@ void test11()
     cout<<max_index<<"\n"<<min_index<<endl;
 }
 
-// 6.6 vector <int> 类型 输出重载
+// 5.6 vector <int> 类型 输出重载
 // 重载vector的<< 运算符 用于直接输出 vector<int>
 ostream& operator<< (ostream& cout,vector<int>& a)
 {
