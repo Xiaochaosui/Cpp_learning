@@ -49,10 +49,49 @@ void test1()
     
 }
 
+// 自定义数据类型 Person 类
+class Person
+{
+public:
+    string m_Name;
+    int m_Age;
+    Person(string name,int age);
+    void show();
+    
+};
+// 类的成员函数实现
+Person::Person(string name,int age)
+{
+    this->m_Age = age;
+    this->m_Name = name;
+}
+void printPerson(Person p)
+{
+    cout<<"name:"<<p.m_Name<<" age:"<<p.m_Age<<endl;
+}
+
+// 存放自定义数据类型
+void test2()
+{
+   Person p1("xcs",22);
+   Person p2("tom",32);
+   Person p3("jerry",18);
+   vector<Person> v;
+   // 向容器中添加数据
+   v.push_back(p1);
+   v.push_back(p2);
+   v.push_back(p3);
+   // 遍历数据
+   for_each(v.begin(),v.end(),printPerson);
+   
+}
+
+
 int main()
 {
    system("chcp 65001");
-   test1();
+//    test1();
+   test2();
    system("pause");
    return 0;
 }
