@@ -4,6 +4,7 @@
 using namespace std;
 
 //普通的Person 类
+// 普通类分文件编写
 class Person
 {
 public:
