@@ -8,6 +8,8 @@ stypora-root-url: ./
 
 【**由于本科期间学过C语言故跳过基础课程的部分课程，后续会补上笔记**】
 
+【**有些文件名是中文或者你的文件路径里有中文可能会导致运行错误，这是取决于你的编译器(啊穗用的`Mingw`编译器是不支持中文的)**】
+
 ## 1 C++初识
 
 ### 1.1 变量
@@ -2434,11 +2436,112 @@ STL容器就是把运用最广泛的数据结构实现出来
 
 
 
+## 4 String容器
+
+### 4.1 string基本概念
+
+**本质：**
+
+- string是C++风格的字符串，而string本质是一个类
+
+**string和char* 的区别：**
+
+- char* 是一个指针
+- string是一个类，类内部封装了char*，管理这个字符串，是一个char\*型的容器。
+
+**特点:**
+
+- string类内部封装了很多成员方法
+  - 如查找find，拷贝copy，删除delete，替换replace，插入insert
+- string管理char* 所分配的内存，不用担心复制越界和取值越界等，由类内部进行负责
+
+
+
+### 4.2 string构造函数
+
+**只要使用string文件前面要导入**`#include <string>`
+
+构造函数原型：
+
+- `string();`  										//默认构造
+- `string(const char * s);`  			// 用char* 构造
+- `string(const string& str);`		// 拷贝构造
+- `string(int n, char c);`			// 使用n个字符c初始化构造
+
+```C++
+// 4.1 string构造函数
+void test1()
+{
+   string s1; //默认构造
+   const char* str = "xcs is a good man";
+   string s2(str); // 用char* 构造
+   string s3(s2);   // 拷贝构造
+   cout<<"s2:"<<s2<<endl;
+   cout<<"s3:"<<s3<<endl;
+   string s4(10,'a'); // 使用n个字符c初始化构造
+   cout<<"s4:"<<s4<<endl;
+}
+```
+
+总结：
+
+- string的多种构造方式没有可比性，灵活使用即可
+
+### 4.3 string赋值操作
+
+给string字符串进行赋值
+
+**赋值函数的原型：**
+
+- `string& operator=(const char* s);`    // char* 类型字符串 赋值给当前字符串
+- `string& operator=(const string& s); `  //把字符串s 赋值给当前字符串
+- `string& operator=(char c);`   //字符赋值给当前字符串
+- `string& assign(const char* s);`    //把字符串括号里面的参数char* 赋值给当前字符串
+- `string& assign(const char* s,int n);`  //把字符串括号里面的参数 前5个字符赋值给当前字符串
+- `string& assign(const string& s);`  //把字符串括号里面的参数string 赋值给当前字符串
+- `string& assign(int n,char c);`  //n个字符c 赋值给当前字符串
+
+
+
+```C++
+// 4.3 string赋值操作
+void test1()
+{
+   string s1; //默认构造
+   s1 = "xcs is a good man"; // char* 类型字符串 赋值给当前字符串s1
+   cout<<"s1:"<<s1<<endl;
+   string s2;  
+   s2 = s1; //把字符串s1 赋值给当前字符串s2
+   cout<<"s2:"<<s2<<endl; 
+   string s3;
+   s3 = 'a';   //字符赋值给当前字符串
+   cout<<"s3:"<<s3<<endl;
+   string s4;
+   s4.assign("xcs is a good man!");
+   cout<<"s4:"<<s4<<endl; //把字符串括号里面的参数char*  赋值给当前字符串s4
+   string s5;
+   s5.assign("xcs is a good man",5); //把字符串括号里面的参数 前5个字符赋值给当前字符串s5
+   cout<<"s5:"<<s5<<endl;
+   string s6;
+   s6.assign(s5); //把字符串括号里面的参数string 赋值给当前字符串s6
+   cout<<"s6:"<<s6<<endl; 
+   string s7;
+   s7.assign(5,'c'); //n个字符c 赋值给当前字符串s7
+   cout<<"s7:"<<s7<<endl; 
+}
+```
+
+总结：
+
+- 啊穗个人建议`operator=`还是比较实用，建议使用的时候用这个赋值就好了，但是当看到别人的代码写到assign需要看的懂就行
+
+### 4.4 字符串拼接
 
 
 
 
-## 4 字符串
+
+
 
 ### 4.1 strcmp(chars1,chars2)函数
 
@@ -2558,7 +2661,7 @@ vector存放内置数据类型:
 - 算法：`for_each`
 - 迭代器:`vector\<int>:iterator`
 
-5 vector.cpp:
+5 vector.cpp-vector容器存放内置数据类型：
 
 ```C++
 #include <iostream>
@@ -2571,7 +2674,7 @@ void myPrint(int v)
 {
    cout<<v<<endl;
 }
-// vector容器算法内置数据类型
+// vector容器存放内置数据类型
 void test1()
 {  
     //创建vector容器，可以理解为一个数组
@@ -2611,11 +2714,87 @@ void test1()
 }
 ```
 
+5 vector.cpp-vector-容器存放自定义的数据类型：
+
+```C++
+// 自定义数据类型 Person 类
+class Person
+{
+public:
+    string m_Name;
+    int m_Age;
+    Person(string name,int age);
+    void show();
+    
+};
+// 类的成员函数实现
+Person::Person(string name,int age)
+{
+    this->m_Age = age;
+    this->m_Name = name;
+}
+void printPerson(Person p)
+{
+    cout<<"name:"<<p.m_Name<<" age:"<<p.m_Age<<endl;
+}
+
+// 存放自定义数据类型
+void test2()
+{
+   Person p1("xcs",22);
+   Person p2("tom",32);
+   Person p3("jerry",18);
+   vector<Person> v;
+   // 向容器中添加数据
+   v.push_back(p1);
+   v.push_back(p2);
+   v.push_back(p3);
+   // 遍历数据
+   for_each(v.begin(),v.end(),printPerson);
+   
+}
+```
+
+5 vector.cpp-vector容器嵌套容器：
+
+主要就是理清里面的嵌套逻辑
+
+```C++
+// vector容器嵌套容器
+void test3()
+{
+   vector<vector<int>> v;
+   //创建小容器
+   vector<int> v1;
+   vector<int> v2;
+   vector<int> v3;
+   // 小容器添加数据
+   v1.push_back(2);
+   v1.push_back(3);
+   v2.push_back(20);
+   v2.push_back(30);
+   v3.push_back(200);
+   v3.push_back(300);
+   //小容器添加到大容器中去
+   v.push_back(v1);
+   v.push_back(v2);
+   v.push_back(v3);
+    // 通过大容器，把所有的数据遍历一遍
+    for (vector<vector<int>>::iterator it = v.begin();it!=v.end();it++)
+    {
+        for (vector<int>::iterator vit = (*it).begin();vit!=(*it).end();vit++)
+        {
+            cout<<*vit<<" ";
+        }
+        cout<<endl;
+    }
+    
+}
+```
+
 总结:
 
 - 主要了解vector的一个创建，插入数据、遍历的过程并结合STL的个别算法
-
-
 
 
 
