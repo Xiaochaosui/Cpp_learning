@@ -2461,12 +2461,14 @@ STL容器就是把运用最广泛的数据结构实现出来
 
 **只要使用string文件前面要导入**`#include <string>`
 
-构造函数原型：
+**构造函数原型**：
 
 - `string();`  										//默认构造
 - `string(const char * s);`  			// 用char* 构造
 - `string(const string& str);`		// 拷贝构造
 - `string(int n, char c);`			// 使用n个字符c初始化构造
+
+4.2 string构造函数.cpp:
 
 ```C++
 // 4.1 string构造函数
@@ -2501,7 +2503,7 @@ void test1()
 - `string& assign(const string& s);`  //把字符串括号里面的参数string 赋值给当前字符串
 - `string& assign(int n,char c);`  //n个字符c 赋值给当前字符串
 
-
+4.3 string赋值操作.cpp:
 
 ```C++
 // 4.3 string赋值操作
@@ -2535,31 +2537,290 @@ void test1()
 
 - 啊穗个人建议`operator=`还是比较实用，建议使用的时候用这个赋值就好了，但是当看到别人的代码写到assign需要看的懂就行
 
-### 4.4 字符串拼接
+### 4.4 string字符串拼接
+
+实现在字符串末尾拼接字符串
+
+**函数原型：**
+
+- `string& operator+=(const char* str);`   //重载+=操作符
+- `string& operator+=(const char c);`   //重载+=操作符
+- `string& operator+=(const string& str);`   //重载+=操作符
+- `string& append(const char* s);`   // 将字符串s连接到当前字符串结尾
+- `string& append(const char* s,int n);`   // 将字符串s的前n个字符连接到当前字符串结尾
+- `string& append(const string& s);`   // 将字符串s连接到当前字符串结尾 同`string& append(const string& str);` 
+- `string& append(const string& s,int pos,int n);`  // 将字符串s中从pos开始的n个字符连接到字符串末尾
+
+4.4 string字符串拼接.cpp:
+
+```C++
+// 4.4 字符串拼接
+void test1()
+{
+    string s1 = "xcs ";
+    s1 += " is a good man";  //重载+=操作符
+    cout<<"s1:"<<s1<<endl;
+    s1 += "!";   //重载+=操作符
+    cout<<"s1:"<<s1<<endl;
+    string s2 = "@SAIC";  
+    s1 += s2;       //重载+=操作符
+    cout<<"s1:"<<s1<<endl; 
+    string s3 = "xcs";
+    s3.append(" loves basketball"); // 将字符串s连接到当前字符串结尾
+    cout<<"s3:"<<s3<<endl; 
+    s3.append(" love LOL",4);  // 将字符串s的前n个字符连接到当前字符串结尾
+    cout<<"s3:"<<s3<<endl; 
+    string s4 = "&xcsy";
+    s3.append(s4);
+    cout<<"s3:"<<s3<<endl;  // 将字符串s连接到当前字符串结尾
+    string s5 = "hello@@";
+    s3.append(s5,2,4);// 将字符串s中从pos开始的n个字符连接到字符串末尾
+    cout<<"s3:"<<s3<<endl;
+}
+```
+
+总结:
+
+- 字符串拼接的重载很多，至少会一种，有需要就查笔记就可以。
+
+### 4.5 string查找和替换
+
+1. 查找：查找指定字符串是否存在
+2. 替换：在指定的位置替换字符串
+
+**函数原型：**
+
+- `int find(const string& str,int pos=0) const;`	//查找str**第一次**出现位置，从pos开始查找
+- `int find(const char* s,int pos=0) const;`	//查找s**第一次**出现位置，从pos开始查找
+- `int find(const char* s,int pos,int n) const;`	//从pos开始查找s的前n个字符**第一次**出现的位置
+- `int find(const char c,int pos=0) const;`	//查找字符c**第一次**出现位置，从pos开始查找
+- `int rfind(const string& str,int pos=npos) const;`  	//查找str**最后一次**出现位置，从pos开始查找
+- `int rfind((const char* s,int pos=npos) const;`  	//查找s**最后一次**出现位置，从pos开始查找
+- `int rfind(const char* s,int pos,int n) const;`  	//从pos开始查找s的前n个字符**最后一次**出现的位置
+- `int rfind(const char c,int pos=0) const;`  	//查找字符c**最后一次**出现位置，从pos开始查找
+
+**以上查找函数未查到就返回-1** 
+
+- `string& replace(int pos,int n,const string & str);`  //替换从pos开始的n个字符为字符串str
+- `string& replace(int pos,int n,const char* s);`  //替换从pos开始的n个字符为字符串s
+
+**源字符串改变！**
+
+4.5 string查找和替换.cpp-查找：
+
+```C++
+// 4.5 string查找和替换
+
+//1、查找
+void test1()
+{
+    string s1 = "abcdefgde";
+    int pos;
+    // pos = s1.find("de");
+    pos = s1.find("df");
+    if(pos == -1)
+    {
+        cout<<"not find"<<endl;
+    }
+    else
+    {
+        cout<<"pos:"<<pos<<endl; // 返回的是参数字符串的第一个字符第一次出现所在的索引 未查到就返回-1 
+    }
+    pos = s1.rfind("de"); // 从右往左查的第一个 所出现的位置索引
+    cout<<"pos:"<<pos<<endl; 
+}
+
+
+```
+
+4.5 string查找和替换.cpp-替换：
+
+```C++
+// 2、替换
+void test2()
+{
+   string s1 = "xcs is a good man";
+   s1.replace(0,3,"asdff");  // 从0号位置起的3个字符 替换为后面这个参数字符串所有，不管后面这个字符串有多长
+   cout<<"s1:"<<s1<<endl;
+}
+void test3()
+{   /*
+    s.replace(pos, n, s1)     //用s1替换s中从pos开始（包括0）的n个字符的子串 
+    */
+    string s1 = "xcs is a good man";
+    cout<<"s1:"<<s1<<endl;
+    s1.replace(1,3,"xcsy");
+    cout<<"s1_replace:"<<s1<<endl;
+}
+```
+
+总结：
+
+- find查找是从左往后，rfind从右往左
+- find找到字符串后返回查找的第一个字符位置，找不到则返回-1
+- replace在替换时，要指定从哪个位置起，多少个字符，替换成什么样的字符串
+
+
+
+### 4.6 string字符串比较
+
+字符串之间的比较。
+
+**比较方式：**
+
+- 字符串比较是按字符的ASCII码进行对比
+  - = 返回 0
+  - \> 返回 1
+  - \< 返回 -1
+
+**函数原型:**
+
+- `int compare(const string& s) const;`  //与字符串s比较
+- `int compare(const char* s) const;`  //与字符串s比较
+
+4.6 string字符串比较.cpp:
+
+```C++
+// 4.6 string字符串比较
+/* 字符串比较是按字符的ASCII码进行对比
+
+ = 返回 0
+ > 返回 1
+ < 返回 -1 */
+void test1()
+{
+    string s1 = "xcs";
+    //string s2 = "xcs";
+    string s2 = "ycs";
+    // string s2 = "ucs";
+    if(s1.compare(s2) == 0)
+    {
+        cout<<s1<<" == "<<s2<<endl;
+    }
+    else if(s1.compare(s2) == -1)
+    {
+        cout<<s1<<" < "<<s2<<endl;
+    }
+    else if(s1.compare(s2) == 1)
+    {
+        cout<<s1<<" > "<<s2<<endl;
+    }
+
+
+}
+```
+
+总结：
+
+- 字符串比较主要是为了看两个字符串相等，比较谁大谁小没有太大的意义
+
+
+
+### 4.7 string字符存取
+
+string中单个字符**存取**方式：
+
+- `char& operator[](int n);`  //通过[] 方式取字符
+- `char& at(int n);`  //通过at() 方式取字符
+
+4.7 string字符存取.cpp：
+
+```c++
+// 4.7 string字符存取
+void test1()
+{
+   string s1 = "xcs is a good man";
+   for (int i = 0; i < s1.size(); i++)
+   {
+      cout<<s1[i]<<" ";   //通过[] 方式取字符
+   }
+   cout<<endl;
+
+   for (int i = 0; i < s1.size(); i++)
+   {
+      cout<<s1.at(i)<<" ";//通过at() 方式取字符 
+   }
+   cout<<endl;
+   // 修改单个字符
+   s1[0] = 'Y';
+   s1.at(1) = 'Y';
+   cout<<"s1:"<<s1<<endl;
+}
+```
+
+总结:
+
+- 个人建议用[] 方式访问单个字符，但是要了解at()的用法，如果出现要认识是啥意思
+
+### 4.8 string插入和删除
+
+对string字符串进行插入和删除字符操作。
+
+**函数原型：**
+
+- `string& insert(int pos,const char*s);`  // 在指定位置插入字符串s
+- `string& insert(int pos,const string& str);`  // 在指定位置符串str
+- `string& insert(int pos,int n,char c);`  // 在指定位置插入n个字符c
+- `string& erase(int pos,int n=npos);`  // 删除从pos开始的n个字符
+
+4.8 string插入和删除.cpp：
+
+```C++
+// 4.8 string插入和删除
+
+void test1()
+{
+    string s1 = "xcs is a man";
+    s1.insert(9,"good "); //在索引9位置 插入 "good "
+    cout<<"s1:"<<s1<<endl;
+    // 删除
+    s1.erase(0,3);
+    cout<<"s1:"<<s1<<endl;
+}
+```
+
+总结：
+
+- 不管插入还是删除都需要指定下标，且下标都是从0开始数的。
+
+### 4.9 string字串获取
+
+从字符串中获取想要的子串或者说截取字符串的一部分。
+
+**函数原型：**
+
+- `string substr(int pos = 0,int n ) const;` //返回由pos开始的n个字符组成的字符串
+
+4.9 string字串获取.cpp：
+
+```C++
+// 4.9 string字串获取
+void test1()
+{
+   string s1 = "xcs is a good man";
+   string s2;
+   s2 = s1.substr(9,4);//截取 "good" //返回由pos开始的n个字符组成的字符串
+   cout<<"s2:"<<s2<<endl;
+ 
+   string email = "chaosuixiao@gmail.com";
+   //从邮箱地址中获取 用户名信息
+
+   int pos = email.find("@");
+   string name;
+   name = email.substr(0,pos);
+   cout<<"name:"<<name<<endl;
+}
+```
+
+总结：
+
+- 该函数功能为：返回从pos开始的n个字符组成的字符串，**原字符串不被改变**。可以类比python中的切片
+
+- 如要截取的是某个字符后面的一部分，可以先用`string find(char c);` 获得某个字符的 index然后用`substr`去截取所需的字符串。
 
 
 
 
-
-
-
-### 4.1 strcmp(chars1,chars2)函数
-
-针对char 数组的，两个字符串相等为0反之为-1；
-
-### 4.2 截取字符串的一部分
-
-`string substr(int pos = 0,int n ) const;`
-
-- **函数说明**
-
-  参数1  pos是可缺省参数，默认为0，即：从字符串头开始读取。
-
-  参数2  n表示取多少个字符
-
-  该函数功能为：返回从pos开始的n个字符组成的字符串，**原字符串不被改变**。可以类比python中的切片
-
-如要截取的是某个字符后面的一部分，可以先用`string find(char c);` 获得某个字符的 index然后用`substr`去截取所需的字符串。
 
 ### 4.3 字符串替换
 
